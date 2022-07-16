@@ -12,7 +12,25 @@
                             >
                         </h5>
                         <div class="card-body">
-                            <form>
+                            <form @submit.prevent="storeData">
+                                <div class="form-group">
+                                    <label for="name">Name</label>
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="name"
+                                        aria-describedby="emailHelp"
+                                        placeholder="Enter name"
+                                        v-model="form.name"
+                                    />
+
+                                    <span
+                                        v-if="errors.name"
+                                        class="text-danger"
+                                        >{{ errors.name[0] }}</span
+                                    >
+                                </div>
+
                                 <div class="form-group">
                                     <label for="exampleInputEmail1"
                                         >Email address</label
@@ -23,38 +41,59 @@
                                         id="exampleInputEmail1"
                                         aria-describedby="emailHelp"
                                         placeholder="Enter email"
+                                        v-model="form.email"
                                     />
-                                    <small
-                                        id="emailHelp"
-                                        class="form-text text-muted"
-                                        >We'll never share your email with
-                                        anyone else.</small
+
+                                    <span
+                                        v-if="errors.email"
+                                        class="text-danger"
+                                        >{{ errors.email[0] }}</span
                                     >
                                 </div>
+
                                 <div class="form-group">
-                                    <label for="exampleInputPassword1"
-                                        >Password</label
-                                    >
+                                    <label for="phone">Phone</label>
                                     <input
-                                        type="password"
+                                        type="text"
                                         class="form-control"
-                                        id="exampleInputPassword1"
-                                        placeholder="Password"
+                                        id="phone"
+                                        aria-describedby="emailHelp"
+                                        placeholder="Enter Phone no."
+                                        v-model="form.phone"
                                     />
-                                </div>
-                                <div class="form-group form-check">
-                                    <input
-                                        type="checkbox"
-                                        class="form-check-input"
-                                        id="exampleCheck1"
-                                    />
-                                    <label
-                                        class="form-check-label"
-                                        for="exampleCheck1"
-                                        >Check me out</label
+
+                                    <span
+                                        v-if="errors.phone"
+                                        class="text-danger"
+                                        >{{ errors.phone[0] }}</span
                                     >
                                 </div>
-                                <button type="submit" class="btn btn-primary">
+
+                                <div class="form-group">
+                                    <label for="gender">Gender</label>
+                                    <select
+                                        class="form-control"
+                                        id="gender"
+                                        v-model="form.gender"
+                                    >
+                                        <option value="" selected>
+                                            Select One
+                                        </option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                    </select>
+
+                                    <span
+                                        v-if="errors.gender"
+                                        class="text-danger"
+                                        >{{ errors.gender[0] }}</span
+                                    >
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary mt-3"
+                                >
                                     Submit
                                 </button>
                             </form>
@@ -66,6 +105,35 @@
     </div>
 </template>
 <script>
-export default {};
+export default {
+    data() {
+        return {
+            form: {
+                name: "",
+                email: "",
+                phone: "",
+                gender: "",
+            },
+
+            errors: {},
+        };
+    },
+
+    methods: {
+        storeData() {
+            axios
+                .post("/api/students", this.form)
+                .then((res) => {
+                    if (res.status === 201) {
+                        this.form = "";
+                        this.errors = "";
+                    }
+                })
+                .catch((err) => {
+                    this.errors = err.response.data.errors;
+                });
+        },
+    },
+};
 </script>
 <style lang=""></style>
