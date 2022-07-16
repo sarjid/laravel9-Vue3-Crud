@@ -13,7 +13,6 @@
                         </h5>
                         <div class="card-body">
                             <table class="table table-bordered">
-
                                 <thead>
                                     <tr>
                                         <th scope="col">#</th>
@@ -25,21 +24,33 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="(student,index) in students.data" :key="index">
-                                        <th scope="row">{{ ++ index }}</th>
+                                    <tr
+                                        v-for="(
+                                            student, index
+                                        ) in students.data"
+                                        :key="index"
+                                    >
+                                        <th scope="row">{{ ++index }}</th>
                                         <td>{{ student.name }}</td>
                                         <td>{{ student.email }}</td>
                                         <td>{{ student.phone }}</td>
                                         <td>{{ student.gender }}</td>
                                         <td>
-                                            <a
+                                            <router-link
+                                                :to="{
+                                                    name: 'student.edit',
+                                                    params: { id: student.id },
+                                                }"
                                                 href=""
                                                 class="btn btn-sm btn-info"
-                                                >Edit</a
+                                                >Edit</router-link
                                             >
                                             <a
                                                 href=""
                                                 class="btn btn-sm btn-danger"
+                                                @click.prevent="
+                                                    destroy(student.id)
+                                                "
                                                 >Delete</a
                                             >
                                         </td>
@@ -71,6 +82,21 @@ export default {
                 .get("/api/students")
                 .then((res) => {
                     this.students = res.data;
+                })
+                .catch(() => {});
+        },
+
+        destroy(id) {
+            if (!window.confirm("Are You Shure To Delete ?")) {
+                return;
+            }
+
+            axios
+                .delete("/api/students/" + id)
+                .then((res) => {
+                    if (res.status === 200) {
+                        this.fetchData();
+                    }
                 })
                 .catch(() => {});
         },
